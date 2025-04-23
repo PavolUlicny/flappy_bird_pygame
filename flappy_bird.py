@@ -33,9 +33,23 @@ pipe2_counted=False
 pipe3_counted=False
 folder1="flappy_bird"
 
+#func that checks if a txt file is empty
+def is_empty(file):
+    if os.stat(file).st_size>0:
+        return False
+    else:
+        return True
+
 #paths
 bird_path=os.path.join(folder1,"bird.png")
 pipe_path=os.path.join(folder1,"pipe.png")
+
+high_score_file=open(f"{folder1}/high_score.txt", "a")
+high_score_file.close()
+if not is_empty(f"{folder1}/high_score.txt"):
+    high_score_file=open(f"{folder1}/high_score.txt", "r")
+    high_score=int(high_score_file.read())
+    high_score_file.close()
 
 #pipe and bird movement func
 def scene_movement():
@@ -124,6 +138,9 @@ def game_over_func():
         high_score=score
     high_score_label.config(text=f"High score: {high_score}")
     high_score_label.place(x=265,y=200,anchor="center")
+    high_score_file=open(f"{folder1}/high_score.txt","w")
+    high_score_file.write(str(high_score))
+    high_score_file.close()
 
 #window
 window1=tk.Tk()
