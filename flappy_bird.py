@@ -114,13 +114,15 @@ def scene_movement():
 
 #bird jump func
 def bird_jump(event):
-    global bird_speed,jump_strength,game_started,score_label
+    global bird_speed,jump_strength,game_started,score_label,flappy_bird_label,start_label
     if game_started and not game_over:
         bird_speed=-jump_strength
     elif not game_over:
         game_started=True
         high_score_label.place(x=1000,y=1000,anchor="center")
         score_label.place(x=265,y=625,anchor="center")
+        start_label.destroy()
+        flappy_bird_label.destroy()
 
 #function that checks for collisions
 def collision(x1,y1,width1,height1,x2,y2,width2,height2):
@@ -189,6 +191,13 @@ high_score_label.place(x=265,y=500,anchor="center")
 
 #score label
 score_label=tk.Label(window1,text=f"Score: {score}",font=("Courier", 20))
+
+#sarting screen labels
+global flappy_bird_label,start_label
+flappy_bird_label=tk.Label(window1,text="Flappy bird",font=("Courier", 43))
+flappy_bird_label.place(x=265,y=285,anchor="center")
+start_label=tk.Label(window1,text="Press Jump to start",font=("Courier", 20))
+start_label.place(x=265,y=325,anchor="center")
 
 #binds 
 window1.bind("<space>",bird_jump)   
