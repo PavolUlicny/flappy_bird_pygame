@@ -132,10 +132,11 @@ def collision(x1,y1,width1,height1,x2,y2,width2,height2):
 def game_over_func():
     global over_label,score_label,high_score_label,score,high_score
     for widget in window1.winfo_children():
-        if widget != high_score_label:
+        if widget!=high_score_label and widget!=score_label:
             widget.destroy()
     over_label=tk.Label(window1,text="Game Over",font=("Courier", 44))
     over_label.place(x=265,y=285,anchor="center")
+    score_label.place(x=265,y=350,anchor="center")
     if score>high_score:
         high_score=score
     high_score_label.config(text=f"High score: {high_score}")
