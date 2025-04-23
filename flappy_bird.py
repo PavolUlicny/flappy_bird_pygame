@@ -92,22 +92,22 @@ def scene_movement():
         if birdy<=-5 or birdy>=591:
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe1x,bottom_pipe1y,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe1x,bottom_pipe1y,pipe_width,pipe_height):
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe1x,bottom_pipe1y-pipe_space,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe1x,bottom_pipe1y-pipe_space,pipe_width,pipe_height):
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe2x,bottom_pipe2y,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe2x,bottom_pipe2y,pipe_width,pipe_height):
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe2x,bottom_pipe2y-pipe_space,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe2x,bottom_pipe2y-pipe_space,pipe_width,pipe_height):
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe3x,bottom_pipe3y,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe3x,bottom_pipe3y,pipe_width,pipe_height):
             game_over=True
             game_over_func()
-        if collision(birdx+5,birdy+2,bird_width-5,bird_height-2,bottom_pipe3x,bottom_pipe3y-pipe_space,pipe_width,pipe_height):
+        if collision(birdx+5,birdy+5,bird_width-5,bird_height-5,bottom_pipe3x,bottom_pipe3y-pipe_space,pipe_width,pipe_height):
             game_over=True
             game_over_func()
     window1.after(1,scene_movement)
