@@ -1,37 +1,39 @@
 #imports
-import tkinter as tk 
-from PIL import Image, ImageTk
+import pygame 
+import sys
 import random
 import os
 
-#variables
-global birdx,birdy,gravity,bird_speed,jump_strength,pipe_speed,game_started,bottom_pipe1x,bottom_pipe1y,bottom_pipe2x,bottom_pipe2y,bottom_pipe3x,bottom_pipe3y,pipe_pause,game_over,bird_height,bird_width,pipe_heigth,pipe_width,score,global_score,pipe1_counted,pipe2_counted,pipe3_counted
-game_started=False
-game_over=False
+#variables 
+global folder, running, start_screen
+window_width=550
+window_height=650
+running=False
+folder="flappy_bird"
 birdx=110
-birdy=150
-gravity=0.002
-bird_speed=0
-pipe_speed=0.3
-jump_strength=0.57
-bottom_pipe1x=650
-bottom_pipe1y=random.randint(225,575)
-bottom_pipe2x=975
-bottom_pipe2y=random.randint(225,575)
-bottom_pipe3x=1300
-bottom_pipe3y=random.randint(225,575)
-pipe_pause=325
-pipe_space=935
+birdy=150   
 bird_width=70
 bird_height=54
 pipe_width=69
 pipe_height=758
-score=0
-high_score=0
+bird_speed=0
+gravity=0.5
+jump_strength=9.5
+pipe1x=650 
+pipe1y=random.randint(225,575)
+pipe2x=975
+pipe2y=random.randint(225,575)
+pipe3x=1300
+pipe3y=random.randint(225,575)
+pipe_space=950
+pipe_pause=325
+pipe_speed=2.5
+start_screen=True
 pipe1_counted=False
 pipe2_counted=False
 pipe3_counted=False
-folder1="flappy_bird"
+high_score=0
+score=0
 
 #func that checks if a txt file is empty
 def is_empty(file):
@@ -39,176 +41,245 @@ def is_empty(file):
         return False
     else:
         return True
-
+    
 #paths
-bird_path=os.path.join(folder1,"bird.png")
-pipe_path=os.path.join(folder1,"pipe.png")
+bird_path=os.path.join(folder,"bird.png")
+pipe_path=os.path.join(folder,"pipe.png")
 
-high_score_file=open(f"{folder1}/high_score.txt", "a")
+#loads high score from file
+high_score_file=open(f"{folder}/high_score.txt", "a")
 high_score_file.close()
-if not is_empty(f"{folder1}/high_score.txt"):
-    high_score_file=open(f"{folder1}/high_score.txt", "r")
+if not is_empty(f"{folder}/high_score.txt"):
+    high_score_file=open(f"{folder}/high_score.txt", "r")
     high_score=int(high_score_file.read())
     high_score_file.close()
 
-#pipe and bird movement func
-def scene_movement():
-    global birdx,birdy,gravity,bird_speed,bottom_pipe1x,bottom_pipe1y,bottom_pipe2x,bottom_pipe2y,bottom_pipe3x,bottom_pipe3y,pipe_pause,game_started,pipe_speed,game_over,pipe1_counted,pipe2_counted,pipe3_counted,score,high_score,score_label
-    if game_started and not game_over:
-        score_label.config(text=f"Score: {score}")
-        bird_label.place(x=birdx,y=birdy)
-        bird_speed+=gravity
-        birdy+=bird_speed
-        bottom_pipe1x-=pipe_speed
-        bottom_pipe_label1.place(x=bottom_pipe1x,y=bottom_pipe1y)
-        top_pipe_label1.place(x=bottom_pipe1x,y=bottom_pipe1y-pipe_space)
-        bottom_pipe2x-=pipe_speed
-        bottom_pipe_label2.place(x=bottom_pipe2x,y=bottom_pipe2y)
-        top_pipe_label2.place(x=bottom_pipe2x,y=bottom_pipe2y-pipe_space)
-        bottom_pipe3x-=pipe_speed
-        bottom_pipe_label3.place(x=bottom_pipe3x,y=bottom_pipe3y)
-        top_pipe_label3.place(x=bottom_pipe3x,y=bottom_pipe3y-pipe_space)
-        if bottom_pipe1x<-100:
-            bottom_pipe1x=bottom_pipe3x+pipe_pause
-            bottom_pipe1y=random.randint(225,575)
-            pipe1_counted=False
-        if bottom_pipe2x<-100:
-            bottom_pipe2x=bottom_pipe1x+pipe_pause
-            bottom_pipe2y=random.randint(225,575)
-            pipe2_counted=False
-        if bottom_pipe3x<-100:
-            bottom_pipe3x=bottom_pipe2x+pipe_pause
-            bottom_pipe3y=random.randint(225,575)
-            pipe3_counted=False
-        if bottom_pipe1x<birdx and not pipe1_counted:
-            score+=1
-            pipe1_counted=True
-        if bottom_pipe2x<birdx and not pipe2_counted:
-            score+=1
-            pipe2_counted=True
-        if bottom_pipe3x<birdx and not pipe3_counted:
-            score+=1
-            pipe3_counted=True
-        if birdy<=-5 or birdy>=591:
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe1x,bottom_pipe1y,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe1x,bottom_pipe1y-pipe_space,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe2x,bottom_pipe2y,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe2x,bottom_pipe2y-pipe_space,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe3x,bottom_pipe3y,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-        if collision(birdx+5,birdy+3,bird_width-5,bird_height-3,bottom_pipe3x,bottom_pipe3y-pipe_space,pipe_width,pipe_height):
-            game_over=True
-            game_over_func()
-    window1.after(1,scene_movement)
+#initializing pygame
+pygame.init()
 
-#bird jump func
-def bird_jump(event):
-    global bird_speed,jump_strength,game_started,score_label,flappy_bird_label,start_label
-    if game_started and not game_over:
-        bird_speed=-jump_strength
-    elif not game_over:
-        game_started=True
-        high_score_label.place(x=1000,y=1000,anchor="center")
-        score_label.place(x=265,y=625,anchor="center")
-        start_label.destroy()
-        flappy_bird_label.destroy()
+#load bird image
+bird_img1=pygame.image.load((f"{folder}/bird.png"))
+bird_img=pygame.transform.scale(bird_img1,(70,54))
 
-#function that checks for collisions
-def collision(x1,y1,width1,height1,x2,y2,width2,height2):
-    return (x1<x2+width2 and x1+width1>x2 and y1<y2+height2 and y1+height1>y2)
+#load pipe image 
+pipe_img1=pygame.image.load((f"{folder}/pipe.png"))
+down_pipe_img=pygame.transform.scale(pipe_img1,(69,758))
 
-#game over screen
-def game_over_func():
-    global over_label,score_label,high_score_label,score,high_score
-    for widget in window1.winfo_children():
-        if widget!=high_score_label and widget!=score_label:
-            widget.destroy()
-    over_label=tk.Label(window1,text="Game Over",font=("Courier", 44))
-    over_label.place(x=265,y=285,anchor="center")
-    score_label.place(x=265,y=350,anchor="center")
+#flip pipe img 
+top_pipe_img=pygame.transform.flip(down_pipe_img, False, True)
+
+#fonts and texts
+text_color=(0,0,0)
+font1=pygame.font.SysFont("Courier",60)
+flappy_bird_text=font1.render("Flappy bird",True,text_color)
+font2=pygame.font.SysFont("Arial",30)
+jump_start_text=font2.render("Press the Jump button to start",True,text_color)
+game_over_text=font1.render("Game over",True,text_color)
+restart_text=font2.render("Press backspace to retry",True,text_color)
+high_score_text=font2.render(f"High score: {high_score}",True,text_color)
+score_text=font2.render(f"Score: {score}",True,text_color)
+ 
+#create window
+window1=pygame.display.set_mode((window_width,window_height))
+pygame.display.set_caption("Flappy bird")
+clock=pygame.time.Clock()
+
+#game over function
+def game_over():
+    global running,score,high_score
     if score>high_score:
         high_score=score
-    high_score_label.config(text=f"High score: {high_score}")
-    high_score_label.place(x=265,y=200,anchor="center")
-    high_score_file=open(f"{folder1}/high_score.txt","w")
+    high_score_file=open(f"{folder}/high_score.txt","w")
     high_score_file.write(str(high_score))
     high_score_file.close()
+    running=False
+    
+#restart game function
+def restart_func():
+    
+    #reset variables
+    global running,birdx,birdy,bird_speed,pipe1x,pipe1y,pipe2x,pipe2y,pipe3x,pipe3y,score,pipe1_counted,pipe2_counted,pipe3_counted
+    birdx=110
+    birdy=150   
+    bird_speed=0
+    pipe1x=650 
+    pipe1y=random.randint(225,575)
+    pipe2x=975
+    pipe2y=random.randint(225,575)
+    pipe3x=1300
+    pipe3y=random.randint(225,575)
+    score=0
+    pipe1_counted=False
+    pipe2_counted=False
+    pipe3_counted=False
+    
+    #run main loop
+    running=True
 
-#window
-window1=tk.Tk()
-window1.title("Flappy Bird")
-window1.geometry("550x650")
+#start screen loop
+while start_screen:
 
-#bird (5:4)
-bird_img=Image.open(bird_path).convert("RGBA")
-bird_img_resized=bird_img.resize((bird_width,bird_height))
-bird1=ImageTk.PhotoImage(bird_img_resized)
-bird_label=tk.Label(window1,image=bird1)
-bird_label.place(x=birdx,y=birdy)
+    #set fps
+    clock.tick(20)
+    
+    #sets window color
+    window1.fill((135,206,235))
+    
+    #render text
+    window1.blit(flappy_bird_text,(70,110))
+    window1.blit(jump_start_text,(110,250))
+    window1.blit(high_score_text,(190,320))
+    
+    #checking for events
+    for event in pygame.event.get():
+        
+        #exit the app
+        if event.type==pygame.QUIT:
+            start_screen=False
+            pygame.quit()
+            sys.exit()
+            
+        #binds
+        if event.type==pygame.KEYDOWN:
+            if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
+                start_screen=False
+                running=True
+                
+        if event.type==pygame.MOUSEBUTTONDOWN:
+            if event.button==1:
+                start_screen=False
+                running=True
+    
+    #update the window
+    pygame.display.update()
+    
+#game loop
+while True:
+    
+    #main game loop
+    while running:
+        
+        #set fps
+        clock.tick(60)
+        
+        #sets window color
+        window1.fill((135,206,235))
+        
+        #check for events
+        for event in pygame.event.get():
+            
+            #check for quit event
+            if event.type==pygame.QUIT:
+                running=False
+                pygame.quit()
+                sys.exit()
+                
+            #check for key presses that trigger a jump
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
+                    bird_speed=-jump_strength
+                    
+            if event.type==pygame.MOUSEBUTTONDOWN:
+                if event.button==1:
+                    bird_speed=-jump_strength
+                    
+        #moves pipes and bird by adjusting position variables
+        bird_speed+=gravity
+        birdy+=bird_speed
+        pipe1x-=pipe_speed
+        pipe2x-=pipe_speed
+        pipe3x-=pipe_speed
+        
+        #hitboxes
+        bird_rect=pygame.Rect(birdx+5,birdy+3,bird_width-5,bird_height-3)
+        down_pipe1_rect=pygame.Rect(pipe1x,pipe1y,pipe_width,pipe_height)
+        top_pipe1_rect=pygame.Rect(pipe1x,pipe1y-pipe_space,pipe_width,pipe_height)
+        down_pipe2_rect=pygame.Rect(pipe2x,pipe2y,pipe_width,pipe_height)
+        top_pipe2_rect=pygame.Rect(pipe2x,pipe2y-pipe_space,pipe_width,pipe_height)
+        down_pipe3_rect=pygame.Rect(pipe3x,pipe3y,pipe_width,pipe_height)
+        top_pipe3_rect=pygame.Rect(pipe3x,pipe3y-pipe_space,pipe_width,pipe_height)
+        
+        #check for collisions or bird getting out of bounds
+        if bird_rect.colliderect(down_pipe1_rect) or bird_rect.colliderect(down_pipe2_rect) or bird_rect.colliderect(down_pipe3_rect):
+            game_over()
+        if bird_rect.colliderect(top_pipe1_rect) or bird_rect.colliderect(top_pipe2_rect) or bird_rect.colliderect(top_pipe3_rect):
+            game_over()
+        if birdy<-3 or birdy>653-bird_height:
+            game_over()
 
-#bottom pipe 1
-bottom_pipe_img=Image.open(pipe_path).convert("RGBA")
-bottom_pipe_img_resized=bottom_pipe_img.resize((pipe_width,pipe_height))
-bottom_pipe=ImageTk.PhotoImage(bottom_pipe_img_resized)
-bottom_pipe_label1=tk.Label(window1,image=bottom_pipe)
-bottom_pipe_label1.place(x=1000,y=1000)
-
-#top pipe 1
-top_pipe_img=bottom_pipe_img_resized.transpose(Image.FLIP_TOP_BOTTOM)
-top_pipe=ImageTk.PhotoImage(top_pipe_img)
-top_pipe_label1=tk.Label(window1,image=top_pipe)
-top_pipe_label1.place(x=1000,y=1000)
-
-#bottom pipe 2
-bottom_pipe_label2=tk.Label(window1,image=bottom_pipe)
-bottom_pipe_label2.place(x=1000,y=1000)
-
-#top pipe 2
-top_pipe_label2=tk.Label(window1,image=top_pipe)
-top_pipe_label2.place(x=1000,y=1000)
-
-#bottom pipe 3
-bottom_pipe_label3=tk.Label(window1,image=bottom_pipe)
-bottom_pipe_label3.place(x=1000,y=1000)
-
-#top pipe 3
-top_pipe_label3=tk.Label(window1,image=top_pipe)
-top_pipe_label3.place(x=1000,y=1000)
-
-#high score label
-high_score_label=tk.Label(window1,text=f"High score: {high_score}",font=("Courier", 26))
-high_score_label.place(x=265,y=500,anchor="center")
-
-#score label
-score_label=tk.Label(window1,text=f"Score: {score}",font=("Courier", 20))
-
-#sarting screen labels
-global flappy_bird_label,start_label
-flappy_bird_label=tk.Label(window1,text="Flappy bird",font=("Courier", 43))
-flappy_bird_label.place(x=265,y=285,anchor="center")
-start_label=tk.Label(window1,text="Press Jump to start",font=("Courier", 20))
-start_label.place(x=265,y=325,anchor="center")
-
-#binds 
-window1.bind("<space>",bird_jump)   
-window1.bind("<Return>",bird_jump)  
-window1.bind("<Button-1>",bird_jump)
-window1.bind("<Button-2>",bird_jump)
-window1.bind("<Button-3>",bird_jump)
-
-#runs the scene_movement function
-scene_movement()
-
-#loop
-window1.mainloop()
+        #checks if pipes are at the end of the screen and if so, moves them to the start
+        if pipe1x<-100:
+            pipe1x=pipe3x+pipe_pause
+            pipe1y=random.randint(225,575)
+            pipe1_counted=False
+        if pipe2x<-100:
+            pipe2x=pipe1x+pipe_pause
+            pipe2y=random.randint(225,575)
+            pipe2_counted=False
+        if pipe3x<-100:
+            pipe3x=pipe2x+pipe_pause
+            pipe3y=random.randint(225,575)
+            pipe3_counted=False
+        
+        #places all images at their desired spot 
+        window1.blit(bird_img,(birdx,birdy))
+        window1.blit(down_pipe_img,(pipe1x,pipe1y))
+        window1.blit(top_pipe_img,(pipe1x,pipe1y-pipe_space))
+        window1.blit(down_pipe_img,(pipe2x,pipe2y))
+        window1.blit(top_pipe_img,(pipe2x,pipe2y-pipe_space))
+        window1.blit(down_pipe_img,(pipe3x,pipe3y))
+        window1.blit(top_pipe_img,(pipe3x,pipe3y-pipe_space))
+        
+        if pipe1x<birdx and not pipe1_counted:
+            score+=1
+            pipe1_counted=True
+        
+        if pipe2x<birdx and not pipe2_counted:
+            score+=1
+            pipe2_counted=True
+        
+        if pipe3x<birdx and not pipe3_counted:
+            score+=1
+            pipe3_counted=True
+        
+        #score text 
+        score_text=font2.render(f"Score: {score}",True,text_color)
+        window1.blit(score_text,(220,600))
+        
+        
+        #displays all updates that happened
+        pygame.display.update()
+        
+    #game over/restart screen
+    while not running:
+        
+        #set fps
+        clock.tick(20)
+        
+        #sets window color
+        window1.fill((135,206,235))
+        
+        #render text
+        window1.blit(game_over_text,(100,110))
+        window1.blit(restart_text,(130,200))
+        score_text=font2.render(f"Score: {score}",True,text_color)
+        window1.blit(score_text,(220,270))
+        high_score_text=font2.render(f"High score: {high_score}",True,text_color)
+        window1.blit(high_score_text,(190,330))
+        
+        #checking for events
+        for event in pygame.event.get():
+            
+            #exit the app
+            if event.type==pygame.QUIT:
+                start_screen=False
+                pygame.quit()
+                sys.exit()
+                
+            #binds
+            if event.type==pygame.KEYDOWN:
+                if event.key==pygame.K_BACKSPACE:
+                    restart_func()
+        
+        #update the window
+        pygame.display.update()
