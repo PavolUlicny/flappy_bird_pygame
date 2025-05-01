@@ -246,7 +246,6 @@ while True:
         score_text=font2.render(f"Score: {score}",True,text_color)
         window1.blit(score_text,(220,600))
         
-        
         #displays all updates that happened
         pygame.display.update()
         
