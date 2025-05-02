@@ -46,6 +46,32 @@ def is_empty(file):
         return False
     else:
         return True
+    
+#func for encrypting a num
+def encrypt(num):
+    list1=list(str(num))
+    list1=[int(s) for s in list1]
+    list2=[]
+    str1=""
+    for i in list1:
+        list2.append(chr(i+110))
+    list2.reverse()
+    for i in list2:
+        str1+=i
+    return str1
+
+#func for deencrypting a num
+def deencrypt(text):
+    list1=list(text)
+    list2=[]
+    str1=""
+    num=0
+    for i in list1:
+        list2.append(ord(i)-110)
+    list2.reverse()
+    for i in list2:
+        str1+=str(i)
+    return int(str1)
 
 #paths
 bird_path=os.path.join(folder,"bird.png")
@@ -63,10 +89,9 @@ if not is_empty(f"{folder}/high_score.txt"):
     for i in high_score_list:
         var=i.split("/")
         high_score_name.append(var[0])
-        high_score_num.append(var[1])
+        high_score_num.append(deencrypt(var[1]))
     high_score=high_score_num[0]
     high_score_file.close()
-    high_score_num=[int(s) for s in high_score_num]
 
 #initializing pygame
 pygame.init()
@@ -323,7 +348,7 @@ while True:
                     #write the scores into a txt file
                     high_score_file=open(f"{folder}/high_score.txt","w")
                     for idx,i in enumerate(high_score_name):
-                        high_score_file.write(f"{i}/{high_score_num[idx]}\n")
+                        high_score_file.write(f"{i}/{encrypt(high_score_num[idx])}\n")
                     high_score_file.close()
                     
                     #reset some variables
@@ -343,7 +368,7 @@ while True:
                         for i in high_score_list:
                             var=i.split("/")
                             high_score_name.append(var[0])
-                            high_score_num.append(var[1])
+                            high_score_num.append(deencrypt(var[1]))
                         high_score=high_score_num[0]
                         high_score_file.close()
                         high_score_num=[int(s) for s in high_score_num]
