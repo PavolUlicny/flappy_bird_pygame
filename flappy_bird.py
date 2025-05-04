@@ -188,6 +188,9 @@ while start_screen:
             if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
                 start_screen=False
                 running=True
+            elif event.key==pygame.K_ESCAPE:
+                pygame.quit()
+                sys.exit()
                 
         if event.type==pygame.MOUSEBUTTONDOWN:
             if event.button==1:
@@ -222,6 +225,9 @@ while True:
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
                     bird_speed=-jump_strength
+                elif event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
                     
             if event.type==pygame.MOUSEBUTTONDOWN:
                 if event.button==1:
@@ -423,6 +429,9 @@ while True:
             if event.type==pygame.KEYDOWN:
                 if event.key==pygame.K_BACKSPACE:
                     restart_func()
+                elif event.key==pygame.K_ESCAPE:
+                    pygame.quit()
+                    sys.exit()
         
         #update the window
         pygame.display.update()
