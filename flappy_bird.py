@@ -326,7 +326,7 @@ while True:
                     name_input=""
                     num=0
                     
-                if event.key==pygame.K_RETURN and len(name_input)>0 and name_input not in high_score_name:
+                elif event.key==pygame.K_RETURN and len(name_input)>0 and name_input not in high_score_name:
                     
                     #process scores
                     num=0
@@ -376,10 +376,10 @@ while True:
                 elif event.key==pygame.K_BACKSPACE:
                     name_input=name_input[:-1]
                     
-                else:
-                    if len(name_input)<3 and event.unicode.isalpha():
-                        name_input+=event.unicode
-                        name_input=name_input.upper()
+
+                elif len(name_input)<3 and event.unicode.isalpha():
+                    name_input+=event.unicode
+                    name_input=name_input.upper()
                     
         #update the window
         pygame.display.update()
