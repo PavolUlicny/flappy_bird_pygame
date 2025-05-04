@@ -185,7 +185,7 @@ while start_screen:
             
         #binds
         if event.type==pygame.KEYDOWN:
-            if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
+            if event.key==pygame.K_SPACE:
                 start_screen=False
                 running=True
             elif event.key==pygame.K_ESCAPE:
