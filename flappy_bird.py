@@ -223,7 +223,7 @@ while True:
                 
             #check for key presses that trigger a jump
             if event.type==pygame.KEYDOWN:
-                if event.key==pygame.K_SPACE or event.key==pygame.K_ESCAPE:
+                if event.key==pygame.K_SPACE:
                     bird_speed=-jump_strength
                 elif event.key==pygame.K_ESCAPE:
                     pygame.quit()
