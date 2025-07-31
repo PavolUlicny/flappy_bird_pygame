@@ -9,7 +9,7 @@ global folder, running, start_screen, high_score_set
 window_width=550
 window_height=650
 running=False
-folder="flappy_bird"
+folder="repos/flappy_bird_pygame/flappy_bird"
 birdx=110
 birdy=150   
 bird_width=70
@@ -40,38 +40,44 @@ low_high_score=0
 score=0
 name_input=""
 
-#func that checks if a txt file is empty
-def is_empty(file):
-    if os.stat(file).st_size>0:
-        return False
-    else:
-        return True
+#class for handling file operations
+class FileHandler:
     
-#func for encrypting a num
-def encrypt(num):
-    list1=list(str(num))
-    list1=[int(s) for s in list1]
-    list2=[]
-    str1=""
-    for i in list1:
-        list2.append(chr(i+110))
-    list2.reverse()
-    for i in list2:
-        str1+=i
-    return str1
+    #func that checks if a txt file is empty
+    def is_empty(self, file):
+        if os.stat(file).st_size>0:
+            return False
+        else:
+            return True
+        
+    #func for encrypting a num
+    def encrypt(self, num):
+        list1=list(str(num))
+        list1=[int(s) for s in list1]
+        list2=[]
+        str1=""
+        for i in list1:
+            list2.append(chr(i+110))
+        list2.reverse()
+        for i in list2:
+            str1+=i
+        return str1
 
-#func for deencrypting a num
-def deencrypt(text):
-    list1=list(text)
-    list2=[]
-    str1=""
-    num=0
-    for i in list1:
-        list2.append(ord(i)-110)
-    list2.reverse()
-    for i in list2:
-        str1+=str(i)
-    return int(str1)
+    #func for deencrypting a text into a num
+    def deencrypt(self, text):
+        list1=list(text)
+        list2=[]
+        str1=""
+        num=0
+        for i in list1:
+            list2.append(ord(i)-110)
+        list2.reverse()
+        for i in list2:
+            str1+=str(i)
+        return int(str1)
+    
+#creates an instance of the FileHandler class
+file_handler = FileHandler()
 
 #paths
 bird_path=os.path.join(folder,"bird.png")
@@ -80,7 +86,7 @@ pipe_path=os.path.join(folder,"pipe.png")
 #loads high score from file ....................................................................................................................
 high_score_file=open(f"{folder}/high_score.txt", "a")
 high_score_file.close()
-if not is_empty(f"{folder}/high_score.txt"):
+if not file_handler.is_empty(f"{folder}/high_score.txt"):
     high_score_file=open(f"{folder}/high_score.txt", "r")
     high_score_table=high_score_file.read()
     high_score_list=high_score_table.splitlines()
@@ -89,7 +95,7 @@ if not is_empty(f"{folder}/high_score.txt"):
     for i in high_score_list:
         var=i.split("/")
         high_score_name.append(var[0])
-        high_score_num.append(deencrypt(var[1]))
+        high_score_num.append(file_handler.deencrypt(var[1]))
     high_score=high_score_num[0]
     high_score_file.close()
 
@@ -354,7 +360,7 @@ while True:
                     #write the scores into a txt file
                     high_score_file=open(f"{folder}/high_score.txt","w")
                     for idx,i in enumerate(high_score_name):
-                        high_score_file.write(f"{i}/{encrypt(high_score_num[idx])}\n")
+                        high_score_file.write(f"{i}/{file_handler.encrypt(high_score_num[idx])}\n")
                     high_score_file.close()
                     
                     #reset some variables
@@ -365,7 +371,7 @@ while True:
                     #load the high scores 
                     high_score_file=open(f"{folder}/high_score.txt", "a")
                     high_score_file.close()
-                    if not is_empty(f"{folder}/high_score.txt"):
+                    if not file_handler.is_empty(f"{folder}/high_score.txt"):
                         high_score_file=open(f"{folder}/high_score.txt", "r")
                         high_score_table=high_score_file.read()
                         high_score_list=high_score_table.splitlines()
@@ -374,7 +380,7 @@ while True:
                         for i in high_score_list:
                             var=i.split("/")
                             high_score_name.append(var[0])
-                            high_score_num.append(deencrypt(var[1]))
+                            high_score_num.append(file_handler.deencrypt(var[1]))
                         high_score=high_score_num[0]
                         high_score_file.close()
                         high_score_num=[int(s) for s in high_score_num]
