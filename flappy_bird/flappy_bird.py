@@ -9,7 +9,7 @@ global folder, running, start_screen, high_score_set
 window_width = 550
 window_height = 650
 running = False
-folder = "repos/flappy_bird_pygame/flappy_bird/"
+folder = ""
 birdx = 110
 birdy = 150   
 bird_width = 70
@@ -388,7 +388,6 @@ while True:
 
                 elif event.key == pygame.K_BACKSPACE:
                     name_input = name_input[:-1]
-                    
 
                 elif len(name_input) < 3 and event.unicode.isalpha():
                     name_input += event.unicode
@@ -409,7 +408,7 @@ while True:
         #render text
         window1.blit(game_over_text, (100, 5))
         window1.blit(restart_text, (130, 70))
-        score_text=font2.render(f"Score: {score}", True, text_color)
+        score_text = font2.render(f"Score: {score}", True, text_color)
         window1.blit(score_text, (220, 115))
         
         if len(high_score_name) > 0:
