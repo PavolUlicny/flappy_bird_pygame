@@ -9,7 +9,7 @@ global folder, running, start_screen, high_score_set
 window_width = 550
 window_height = 650
 running = False
-folder = ""
+folder = "flappy_bird/"
 birdx = 110
 birdy = 150   
 bird_width = 70
