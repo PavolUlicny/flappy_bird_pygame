@@ -17,6 +17,9 @@ class FlappyBird:
 
         #load high score from file
         self.load_high_score(f"{self.folder}high_score.txt")
+        
+        #initialize pygame
+        pygame.init()
 
         #fonts and texts
         self.text_color = (0, 0, 0)
@@ -30,17 +33,35 @@ class FlappyBird:
         pygame.display.set_caption("Flappy bird")
         self.clock = pygame.time.Clock()
         
+        #load images
+        
+        #load bird image
+        bird_img1 = pygame.image.load((f"{self.folder}bird.png"))
+        self.bird_img = pygame.transform.scale(bird_img1, (70, 54))
+
+        #load pipe image 
+        pipe_img1 = pygame.image.load((f"{self.folder}pipe.png"))
+        self.down_pipe_img = pygame.transform.scale(pipe_img1, (69, 758))
+
+        #flip pipe img 
+        self.top_pipe_img = pygame.transform.flip(self.down_pipe_img, False, True)
+        
         #start screen loop
         self.start_screen_loop()
         
     #game over function
     def game_over(self):
-        low_high_score = self.high_score_num[-1]
-        if self.score > low_high_score or len(self.high_score_name) < 5 and self.score > 0:
+        if len(self.high_score_name) > 0:
+            low_high_score = self.high_score_num[-1]
+            if self.score > low_high_score or len(self.high_score_name) < 5 and self.score > 0:
+                self.high_score_window_loop()
+            else:
+                self.game_over_loop()
+        elif len(self.high_score_name) == 0 and self.score > 0:
             self.high_score_window_loop()
         else:
             self.game_over_loop()
-        
+            
         
     #function that checks if a txt file is empty
     def is_empty(self, file):
@@ -79,25 +100,23 @@ class FlappyBird:
         high_score_file = open(file1, "a")
         high_score_file.close()
         if not self.is_empty(file1):
-            high_score_file = open(file1, "r")
-            high_score_table = high_score_file.read()
-            high_score_list = high_score_table.splitlines()
-            self.high_score_name = []
-            self.high_score_num = []
-            for i in high_score_list:
-                var = i.split("/")
-                self.high_score_name.append(var[0])
-                self.high_score_num.append(self.deencrypt(var[1]))
-            self.high_score_num = [int(s) for s in self.high_score_num]
-            self.high_score = self.high_score_num[0]
-            high_score_file.close()
+            with open(file1, "r") as high_score_file:
+                high_score_table = high_score_file.read()
+                high_score_list = high_score_table.splitlines()
+                self.high_score_name = []
+                self.high_score_num = []
+                for i in high_score_list:
+                    var = i.split("/")
+                    self.high_score_name.append(var[0])
+                    self.high_score_num.append(self.deencrypt(var[1]))
+                self.high_score_num = [int(s) for s in self.high_score_num]
+                self.high_score = self.high_score_num[0]
 
     #write the scores into a txt file
     def write_high_scores(self, file1):
-        high_score_file = open(file1, "w")
-        for idx, i in enumerate(self.high_score_name):
-            high_score_file.write(f"{i}/{self.encrypt(self.high_score_num[idx])}\n")
-        high_score_file.close()
+        with open(file1, "w") as high_score_file:
+            for idx, i in enumerate(self.high_score_name):
+                high_score_file.write(f"{i}/{self.encrypt(self.high_score_num[idx])}\n")
         
     def start_screen_loop(self):
         
@@ -133,7 +152,7 @@ class FlappyBird:
                 if event.type == pygame.KEYDOWN:
                     
                     if event.key == pygame.K_SPACE:
-                        #start main loop
+                        self.main_loop()
                         return
                         
                     elif event.key == pygame.K_ESCAPE:
@@ -143,7 +162,7 @@ class FlappyBird:
                         
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if event.button == 1:
-                        #start main loop
+                        self.main_loop()
                         return
             
             #update the window
@@ -173,17 +192,7 @@ class FlappyBird:
         pipe1_counted = False
         pipe2_counted = False
         pipe3_counted = False
-        
-        #load bird image
-        bird_img1 = pygame.image.load((f"{self.folder}bird.png"))
-        bird_img = pygame.transform.scale(bird_img1, (70, 54))
-
-        #load pipe image 
-        pipe_img1 = pygame.image.load((f"{self.folder}pipe.png"))
-        down_pipe_img = pygame.transform.scale(pipe_img1, (69, 758))
-
-        #flip pipe img 
-        top_pipe_img = pygame.transform.flip(down_pipe_img, False, True)
+        self.score = 0
                 
         #text 
         score_text = self.font2.render(f"Score: {self.score}", True, self.text_color)
@@ -240,10 +249,13 @@ class FlappyBird:
             #check for collisions or bird getting out of bounds
             if bird_rect.colliderect(down_pipe1_rect) or bird_rect.colliderect(down_pipe2_rect) or bird_rect.colliderect(down_pipe3_rect):
                 self.game_over()
+                return
             if bird_rect.colliderect(top_pipe1_rect) or bird_rect.colliderect(top_pipe2_rect) or bird_rect.colliderect(top_pipe3_rect):
                 self.game_over()
+                return
             if birdy < -3 or birdy > 653 - bird_height:
                 self.game_over()
+                return
 
             #checks if pipes are at the end of the screen and if so, moves them to the start
             if pipe1x < -100:
@@ -260,12 +272,12 @@ class FlappyBird:
                 pipe3_counted = False
             
             #places all images at their desired spot 
-            self.window1.blit(bird_img, (birdx, birdy))
+            self.window1.blit(self.bird_img, (birdx, birdy))
             
             pipe_arr = [(pipe1x, pipe1y), (pipe2x, pipe2y), (pipe3x, pipe3y)]
             for pipe in pipe_arr:
-                self.window1.blit(down_pipe_img, (pipe[0], pipe[1]))
-                self.window1.blit(top_pipe_img, (pipe[0], pipe[1] - pipe_space))
+                self.window1.blit(self.down_pipe_img, (pipe[0], pipe[1]))
+                self.window1.blit(self.top_pipe_img, (pipe[0], pipe[1] - pipe_space))
             
             #increases the score if the bird has passed a pipe
             if pipe1x < birdx and not pipe1_counted:
@@ -353,7 +365,6 @@ class FlappyBird:
                         
                         self.write_high_scores(f"{self.folder}high_score.txt")
                         
-                        #reset some variables
                         self.game_over_loop()
                         return
                         
@@ -365,8 +376,7 @@ class FlappyBird:
                         name_input = name_input[:-1]
 
                     elif len(name_input) < 3 and event.unicode.isalpha():
-                        name_input += event.unicode
-                        name_input = name_input.upper()
+                        name_input += event.unicode.upper()
                         
             #update the window
             pygame.display.update()
@@ -379,6 +389,11 @@ class FlappyBird:
         restart_text = self.font2.render("Press backspace to retry", True, self.text_color)
         high_scores_text = self.font2.render(f"Top 5 highest scores:", True, self.text_color)
         
+        if len(self.high_score_name) > 0:
+            high_scores_text = self.font2.render(f"Top 5 highest scores:", True, self.text_color)
+        else:
+            high_scores_text = self.font2.render("", True, self.text_color)
+    
         while True:
             
             #set fps
@@ -393,10 +408,6 @@ class FlappyBird:
             score_text = self.font2.render(f"Score: {self.score}", True, self.text_color)
             self.window1.blit(score_text, (220, 115))
             
-            if len(self.high_score_name) > 0:
-                high_scores_text = self.font2.render(f"Top 5 highest scores:", True, self.text_color)
-            else:
-                high_scores_text = self.font2.render("", True, self.text_color)
             self.window1.blit(high_scores_text, (140, 160))
             
             high_score_y = 240
@@ -430,3 +441,8 @@ class FlappyBird:
             
             #update the window
             pygame.display.update()
+            
+if __name__ == "__main__":
+    game = FlappyBird()
+    pygame.quit()
+    sys.exit()
