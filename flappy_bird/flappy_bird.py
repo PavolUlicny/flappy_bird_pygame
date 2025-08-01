@@ -304,7 +304,6 @@ class FlappyBird:
         
         #initialize variables
         name_input = ""
-        num = 0
         
         #text
         you_got_text = self.font2.render(f"You got one of the top 5 highest scores!", True, self.text_color)
