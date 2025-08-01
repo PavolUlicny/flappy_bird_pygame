@@ -363,6 +363,8 @@ class FlappyBird:
                         self.high_score_name = self.high_score_name[:5]
                         self.high_score_num = self.high_score_num[:5]
                         
+                        self.high_score = self.high_score_num[0]
+                        
                         self.write_high_scores(f"{self.folder}high_score.txt")
                         
                         self.game_over_loop()
