@@ -1,11 +1,13 @@
 # 𝐅𝐥𝐚𝐩𝐩𝐲 𝐁𝐢𝐫𝐝
 
+==========================
 
 # Description:
 ------------
 This is a simple Flappy Bird clone written in Python using Pygame.
 Fly the bird through gaps between pipes to score points. Avoid hitting pipes or flying out of bounds.
 
+==========================
 
 # Features:
 ---------
@@ -16,6 +18,7 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 - Enter your name (3 letters) if you make the top 5 scores.
 - Simple start screen and game over screen with instructions.
 
+==========================
 
 # Controls:
 ---------
@@ -23,6 +26,7 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 - Press BACKSPACE on game over screen to retry.
 - Press ESCAPE to exit anytime.
 
+==========================
 
 # Files:
 ------
@@ -31,6 +35,7 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 - high_score.txt : Stores encrypted top 5 high scores and player names.
 - main script : Contains the game logic and Pygame window.
 
+==========================
 
 # How to run:
 -----------
@@ -39,6 +44,7 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 3. Run the script.
 4. Enjoy the game!
 
+==========================
 
 # Notes:
 ------
@@ -49,5 +55,3 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 
 
 # Thank you for playing!
-
-==========================
