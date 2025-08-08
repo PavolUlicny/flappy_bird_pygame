@@ -9,7 +9,7 @@ class FlappyBird:
     def __init__(self):
         
         #initialize variables
-        self.folder = "repos/flappy_bird_pygame/flappy_bird/"
+        self.folder = "flappy_bird/"
         self.score = 0
         self.high_score = 0
         self.high_score_name = []
@@ -446,4 +446,5 @@ class FlappyBird:
 if __name__ == "__main__":
     game = FlappyBird()
     pygame.quit()
+
     sys.exit()
