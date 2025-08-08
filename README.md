@@ -53,5 +53,6 @@ Fly the bird through gaps between pipes to score points. Avoid hitting pipes or 
 - Game window size: 550x650 pixels.
 - Fonts: Courier (title), Arial (game texts).
 
+==========================
 
 # Thank you for playing!
