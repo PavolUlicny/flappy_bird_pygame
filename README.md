@@ -1,4 +1,4 @@
-# FLAPPY BIRD
+# Flappy Bird
 
 # Description:
 ------------
